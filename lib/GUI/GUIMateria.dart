@@ -4,10 +4,14 @@ import 'package:dam_u3_practica1_checador_asistencia/main.dart';
 import 'package:flutter/material.dart';
 
 class GUIMateria {
-  static void formularioRegistrar(MyAppState app, bool registrar) {
-    var nmat = app.nmat;
-    var descripcion = app.descripcion;
+  static final nmat = TextEditingController();
+  static final descripcion = TextEditingController();
 
+  static void formularioRegistrar(MyAppState app, bool registrar, [Materia? m]) {
+    if (m!=null){
+      nmat.text = m.nmat;
+      descripcion.text = m.descripcion;
+    }
     showModalBottomSheet(
       context: app.context,
       builder: (context) => Container(
@@ -82,9 +86,7 @@ class GUIMateria {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(icon: Icon(Icons.mode), onPressed: () {
-                  app.nmat.text = materias[index].nmat;
-                  app.descripcion.text = materias[index].descripcion;
-                  formularioRegistrar(app, false);
+                  formularioRegistrar(app, false, materias[index]);
                 }),
                 IconButton(onPressed: () {
                   borrar(app,materias[index]);

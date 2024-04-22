@@ -1,7 +1,11 @@
 import 'package:dam_u3_practica1_checador_asistencia/Controlador/DBMateria.dart';
-import 'package:dam_u3_practica1_checador_asistencia/GUIMateria.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIMateria.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIProfesor.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/Materia.dart';
 import 'package:flutter/material.dart';
+
+import 'Controlador/DBprofesor.dart';
+import 'Modelo/profesor.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -20,14 +24,14 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   int _indice = 0;
   List<Materia> materias = [];
-  var nmat = TextEditingController();
-  var descripcion = TextEditingController();
+  List<Profesor> profesor = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     consultarMaterias();
+    consultarProfesor();
   }
 
   @override
@@ -86,7 +90,10 @@ class MyAppState extends State<MyApp> {
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.green,
           onPressed: () {
-            GUIMateria.formularioRegistrar(this, true);
+            switch(_indice){
+              case 0: GUIMateria.formularioRegistrar(this, true);
+              case 1: GUIProfesor.formularioRegistrar(this, true);
+            }
           },
           child: Row(
             children: [
@@ -103,6 +110,8 @@ class MyAppState extends State<MyApp> {
 
   dinamico() {
     switch (_indice) {
+      case 0:return GUIMateria.listaMaterias(this);
+      case 1: return GUIProfesor.listaProfesor(this);
       default:
         return GUIMateria.listaMaterias(this);
     }
@@ -114,8 +123,15 @@ class MyAppState extends State<MyApp> {
       materias = x;
     });
   }
+  void consultarProfesor() async {
+    var x = await DBprofesor.consultar();
+    setState(() {
+      profesor = x;
+    });
+  }
 
   void mensaje(String s) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s)));
   }
+
 }
