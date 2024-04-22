@@ -1,6 +1,9 @@
+import 'package:dam_u3_practica1_checador_asistencia/Controlador/DBHorario.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Controlador/DBMateria.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIHorario.dart';
 import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIMateria.dart';
 import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIProfesor.dart';
+import 'package:dam_u3_practica1_checador_asistencia/Modelo/HorarioConsultado.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/Materia.dart';
 import 'package:flutter/material.dart';
 
@@ -25,6 +28,7 @@ class MyAppState extends State<MyApp> {
   int _indice = 0;
   List<Materia> materias = [];
   List<Profesor> profesor = [];
+  List<HorarioConsultado> horario = [];
 
   @override
   void initState() {
@@ -32,6 +36,7 @@ class MyAppState extends State<MyApp> {
     super.initState();
     consultarMaterias();
     consultarProfesor();
+    consultarHorario();
   }
 
   @override
@@ -90,9 +95,13 @@ class MyAppState extends State<MyApp> {
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.green,
           onPressed: () {
-            switch(_indice){
-              case 0: GUIMateria.formularioRegistrar(this, true);
-              case 1: GUIProfesor.formularioRegistrar(this, true);
+            switch (_indice) {
+              case 0:
+                GUIMateria.formularioRegistrar(this, true);
+              case 1:
+                GUIProfesor.formularioRegistrar(this, true);
+              case 2:
+                GUIHorario.formularioRegistrar(this, true);
             }
           },
           child: Row(
@@ -110,8 +119,12 @@ class MyAppState extends State<MyApp> {
 
   dinamico() {
     switch (_indice) {
-      case 0:return GUIMateria.listaMaterias(this);
-      case 1: return GUIProfesor.listaProfesor(this);
+      case 0:
+        return GUIMateria.listaMaterias(this);
+      case 1:
+        return GUIProfesor.listaProfesor(this);
+      case 2:
+        return GUIHorario.listaHorario(this);
       default:
         return GUIMateria.listaMaterias(this);
     }
@@ -123,6 +136,7 @@ class MyAppState extends State<MyApp> {
       materias = x;
     });
   }
+
   void consultarProfesor() async {
     var x = await DBprofesor.consultar();
     setState(() {
@@ -134,4 +148,10 @@ class MyAppState extends State<MyApp> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s)));
   }
 
+  void consultarHorario() async {
+    var x = await DBHorario.consultar();
+    setState(() {
+      horario = x;
+    });
+  }
 }
