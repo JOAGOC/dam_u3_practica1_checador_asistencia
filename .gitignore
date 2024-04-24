@@ -60,3 +60,4 @@ app.*.map.json
 /android/app/src/profile/AndroidManifest.xml
 /android/app/src/main/kotlin/com/example/dam_u3_practica1_checador_asistencia/MainActivity.kt
 /android/app/build.gradle
+android

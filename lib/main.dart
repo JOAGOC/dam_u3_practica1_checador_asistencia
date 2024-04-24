@@ -30,6 +30,21 @@ class MyAppState extends State<MyApp> {
   List<Profesor> profesor = [];
   List<HorarioConsultado> horario = [];
 
+  // BottomNavigator
+  static const List<MaterialColor> colores = [
+    Colors.green,
+    Colors.amber,
+    Colors.red,
+    Colors.blue,
+  ];
+  static List<IconData> iconos = [
+    Icons.menu_book_sharp,
+    Icons.school,
+    Icons.access_time_filled,
+    Icons.format_list_numbered
+  ];
+  // BottomNavigator
+
   @override
   void initState() {
     // TODO: implement initState
@@ -61,27 +76,27 @@ class MyAppState extends State<MyApp> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.green,
+        backgroundColor: colores[_indice],
       ),
       body: dinamico(),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book_sharp),
+              icon: Icon(iconos[0]),
               label: "Materia",
-              backgroundColor: Colors.green),
+              backgroundColor: colores[0]),
           BottomNavigationBarItem(
-              icon: Icon(Icons.school),
+              icon: Icon(iconos[1]),
               label: "Profesor",
-              backgroundColor: Colors.yellowAccent.shade700),
+              backgroundColor: colores[1]),
           BottomNavigationBarItem(
-              icon: Icon(Icons.access_time_filled),
+              icon: Icon(iconos[2]),
               label: "Horario",
-              backgroundColor: Colors.red),
+              backgroundColor: colores[2]),
           BottomNavigationBarItem(
-              icon: Icon(Icons.format_list_numbered),
+              icon: Icon(iconos[3]),
               label: "Asistencia",
-              backgroundColor: Colors.blue),
+              backgroundColor: colores[3]),
         ],
         currentIndex: _indice,
         onTap: (index) {
@@ -93,7 +108,7 @@ class MyAppState extends State<MyApp> {
         selectedItemColor: Colors.white,
       ),
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.green,
+          backgroundColor: colores[_indice],
           onPressed: () {
             switch (_indice) {
               case 0:
@@ -106,10 +121,10 @@ class MyAppState extends State<MyApp> {
           },
           child: Row(
             children: [
-              Icon(Icons.menu_book, color: Colors.green.shade50),
+              Icon(iconos[_indice],color: colores[_indice].shade100,),
               Icon(
                 Icons.add,
-                color: Colors.green.shade50,
+                color: colores[_indice].shade100,
               )
             ],
             mainAxisAlignment: MainAxisAlignment.center,
