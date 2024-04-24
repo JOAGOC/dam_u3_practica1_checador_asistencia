@@ -1,13 +1,13 @@
 import 'package:dam_u3_practica1_checador_asistencia/Controlador/DBAsistencia.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIEstandar.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/asistencia.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/horario_asistencia.dart';
-import 'package:flutter_date_pickers/flutter_date_pickers.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 
 class GUIAsistencia {
   //static final idasistencia = TextEditingController();
-  static int nhorario_hora = 0;
+  static int nhorario = 0;
   static DateTime fecha = DateTime.now();
   static bool asistencia = true;
   static var fechaseleccionada = TextEditingController();
@@ -16,10 +16,10 @@ class GUIAsistencia {
       [Horario_Asistencia? a]) {
 
     if (app.horario.isNotEmpty) {
-      nhorario_hora = app.horario.first.nhorario;
+      nhorario = app.horario.first.nhorario;
     }
     if (a != null) {
-      nhorario_hora = a.nhorario;
+      nhorario = a.nhorario;
       fechaseleccionada.text = a.fecha;
     }
 
@@ -32,34 +32,30 @@ class GUIAsistencia {
             right: 8,
             bottom: MediaQuery.of(context).viewInsets.bottom),
         child: ListView(
-          padding: EdgeInsets.all(16),
+          padding: GUIEstandar.paddingFormulario,
           children: [
             Text(
                 '${registrar ? "Registrar una nueva" : "Actualizar"} Asistencia',
-                textAlign: TextAlign.center),
-            SizedBox(
-              height: 16,
-            ),
-            Text('Seleccionar Horario:'),
+                textAlign: TextAlign.center,style: GUIEstandar.estiloTextoBoton),
+            GUIEstandar.espacioEntreCampos,
+            const Text('Seleccionar Horario:'),
             DropdownButtonFormField(
-                icon: Icon(Icons.access_time),
-                value: nhorario_hora,
+                icon: const Icon(Icons.access_time),
+                value: nhorario,
                 items: app.horario.map((e) {
                   return DropdownMenuItem(
-                    child: Text('${e.hora} - ${e.nombre}'),
                     value: e.nhorario,
+                    child: Text('${e.hora} - ${e.nombre}'),
                   );
                 }).toList(),
-                onChanged: (value) => nhorario_hora = value!),
-            SizedBox(
-              height: 25,
-            ),
+                onChanged: (value) => nhorario = value!),
+            GUIEstandar.espacioEntreCampos,
             TextField(
               controller: fechaseleccionada,
               readOnly: true,
-              decoration: InputDecoration(label: Text("Fecha seleccionada:")),
+              decoration: const InputDecoration(label: Text("Fecha seleccionada:")),
             ),
-            SizedBox(height: 20),
+            GUIEstandar.espacioEntreCampos,
             ElevatedButton(
               onPressed: () async {
                 final DateTime? picked = await showDatePicker(
@@ -69,34 +65,33 @@ class GUIAsistencia {
                 if (picked != null && picked != fecha) {
                   fecha = picked;
                 }
+                // ignore: unnecessary_null_comparison
                 fechaseleccionada.text = fecha == null
                     ? 'No se ha seccionado fecha'
-                    : '${fecha.toLocal().toIso8601String().split('T')[0]}';
+                    : fecha.toLocal().toIso8601String().split('T')[0];
               },
-              child: Text('Seleccionar fecha'),
+              child: const Text('Seleccionar fecha'),
             ),
-            SizedBox(
-              height: 23,
-            ),
-            Text('¿ASISTIO?'),
-            SizedBox(
-              height: 20,
-            ),
+            GUIEstandar.espacioEntreCampos,
+            const Text('¿ASISTIO?'),
+            GUIEstandar.espacioEntreCampos,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
+                    style: GUIEstandar.estiloAceptarFormulario,
                     onPressed: () {
                       asistencia = true;
                       registrarOActualizar(context, app, registrar, a);
                     },
-                    child: Text("Sí")),
+                    child: const Text("Sí", style: GUIEstandar.estiloTextoBoton,)),
                 ElevatedButton(
+                    style: GUIEstandar.estiloCancelarFormulario,
                     onPressed: () {
                       asistencia = false;
                       registrarOActualizar(context, app, registrar, a);
                     },
-                    child: Text("No")),
+                    child: const Text("No", style: GUIEstandar.estiloTextoBoton,)),
               ],
             ),
           ],
@@ -116,7 +111,7 @@ class GUIAsistencia {
 
     var m = Asistencia(
         idasistencia: a?.idasistencia,
-        nhorario: nhorario_hora,
+        nhorario: nhorario,
         fecha: fecha.toLocal().toIso8601String().split('T')[0],
         asistencia: asistencia);
     registrar
@@ -134,21 +129,24 @@ class GUIAsistencia {
 
   static Widget listaAsistencia(MyAppState app) {
     var asistencia = app.asistencialist;
-    if (asistencia.length > 0)
+    if (asistencia.isNotEmpty) {
       return ListView.builder(
         itemCount: asistencia.length,
         itemBuilder: (context, index) => ListTile(
           leading: CircleAvatar(
               child: Text(asistencia[index].idasistencia.toString())),
           title:
-              Text('${asistencia[index].nombre} - ${asistencia[index].fecha}'),
+              Text(asistencia[index].nombre),
           subtitle: Text(
-              '${asistencia[index].asistencia} - ${asistencia[index].hora}'),
+'''Fecha: ${asistencia[index].fecha} Hora: ${asistencia[index].hora}
+Materia: ${asistencia[index].descripcion}
+${asistencia[index].asistencia?'Asistió':'No Asistió'}
+'''),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                  icon: Icon(Icons.mode),
+                  icon: const Icon(Icons.mode),
                   onPressed: () {
                     formularioRegistrar(app, false, asistencia[index]);
                   }),
@@ -156,25 +154,24 @@ class GUIAsistencia {
                   onPressed: () {
                     borrar(app, asistencia[index]);
                   },
-                  icon: Icon(Icons.delete))
+                  icon: const Icon(Icons.delete))
             ],
           ),
         ),
       );
-    else
-      return Center(
-        child: Text('No hay Asistencias registradas',
-            style: TextStyle(color: Colors.black54)),
-      );
+    } else {
+      return GUIEstandar.listaVacia('No hay Asistencias registradas');
+    }
   }
 
   static void borrar(MyAppState app, Horario_Asistencia asistencia) {
     showDialog(
       context: app.context,
       builder: (context) => AlertDialog(
-        title: Text("Eliminar"),
-        content: Text("Deseas eliminar la Asistencia?"),
+        title: const Text("Eliminar"),
+        content: const Text("Deseas eliminar la Asistencia?"),
         actions: [
+          TextButton(onPressed: ()=>Navigator.pop(context), child: const Text('Cancelar')),
           TextButton(
               onPressed: () {
                 DBAsistencia.eliminar(asistencia.idasistencia).then((value) {
@@ -183,7 +180,7 @@ class GUIAsistencia {
                   app.mensaje("Asistencia eliminada con exito");
                 });
               },
-              child: Text('Si'))
+              child: const Text('Si'))
         ],
       ),
     );

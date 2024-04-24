@@ -1,4 +1,5 @@
 import 'package:dam_u3_practica1_checador_asistencia/Controlador/DBprofesor.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIEstandar.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/profesor.dart';
 import 'package:dam_u3_practica1_checador_asistencia/main.dart';
 import 'package:flutter/material.dart';
@@ -28,50 +29,40 @@ class GUIProfesor {
                         .viewInsets
                         .bottom),
                 child: ListView(
-                    padding: EdgeInsets.all(16),
+                    padding: GUIEstandar.paddingFormulario,
                     children: [
                   Text(
                     '${registrar
                         ? "Agregar un nuevo"
                         : "Actualizar "} Profesor',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: GUIEstandar.estiloTextoBoton,
+                    textAlign: TextAlign.center,
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  GUIEstandar.espacioEntreCampos,
                   TextField(
                     controller: nprofe,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Número ID",
                       suffixIcon: Icon(Icons.numbers_sharp),
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  GUIEstandar.espacioEntreCampos,
                   TextField(
                     controller: nombreprofe,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Nombre",
                       suffixIcon: Icon(Icons.person),
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  GUIEstandar.espacioEntreCampos,
                   TextField(
                     controller: carreraprofe,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Carrera",
                       suffixIcon: Icon(Icons.star),
                     ),
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
+                  GUIEstandar.espacioEntreCampos,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -79,20 +70,10 @@ class GUIProfesor {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
-                          onPrimary: Colors.white,
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: Text(
+                        style: GUIEstandar.estiloCancelarFormulario,
+                        child: const Text(
                           "Cancelar",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: GUIEstandar.estiloTextoBoton,
                         ),
                       ),
                       ElevatedButton(
@@ -119,19 +100,9 @@ class GUIProfesor {
                               app.mensaje('Profesor actualizado con éxito');
                             });
                           },
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.green,
-                            onPrimary: Colors.white,
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
+                          style: GUIEstandar.estiloAceptarFormulario,
                           child: Text(registrar ? 'Registrar' : 'Actualizar',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              )))
+                              style: GUIEstandar.estiloTextoBoton))
                     ],
                   ),
                 ])));
@@ -139,7 +110,7 @@ class GUIProfesor {
 
   static Widget listaProfesor(MyAppState app) {
     var profesor = app.profesor;
-    if (profesor.length > 0) {
+    if (profesor.isNotEmpty) {
       return ListView.builder(
         itemCount: profesor.length,
         itemBuilder: (context, index) =>
@@ -151,7 +122,7 @@ class GUIProfesor {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                      icon: Icon(Icons.mode),
+                      icon: const Icon(Icons.mode),
                       onPressed: () {
                         formularioRegistrar(app, false, profesor[index]);
                       }),
@@ -159,16 +130,13 @@ class GUIProfesor {
                       onPressed: () {
                         borrar(app, profesor[index]);
                       },
-                      icon: Icon(Icons.delete))
+                      icon: const Icon(Icons.delete))
                 ],
               ),
             ),
       );
     } else {
-      return Center(
-        child: Text('No hay profesores registrados',
-            style: TextStyle(color: Colors.black54)),
-      );
+      return GUIEstandar.listaVacia('No hay profesores registrados');
     }
   }
 
@@ -177,9 +145,10 @@ class GUIProfesor {
       context: app.context,
       builder: (context) =>
           AlertDialog(
-            title: Text("Eliminar"),
-            content: Text("Deseas eliminar el Profesor?"),
+            title: const Text("Eliminar"),
+            content: const Text("Deseas eliminar el Profesor?"),
             actions: [
+              TextButton(onPressed: ()=>Navigator.pop(context), child: const Text('Cancelar')),
               TextButton(
                   onPressed: () {
                     DBprofesor.eliminar(profesor.nprofesor).then((value) {
@@ -188,7 +157,7 @@ class GUIProfesor {
                       app.mensaje("Profesor eliminado con exito");
                     });
                   },
-                  child: Text('Si'))
+                  child: const Text('Si'))
             ],
           ),
     );

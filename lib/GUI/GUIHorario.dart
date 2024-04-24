@@ -1,4 +1,5 @@
 import 'package:dam_u3_practica1_checador_asistencia/Controlador/DBHorario.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIEstandar.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/Horario.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/HorarioConsultado.dart';
 import 'package:dam_u3_practica1_checador_asistencia/main.dart';
@@ -36,95 +37,104 @@ class GUIHorario {
             right: 8,
             bottom: MediaQuery.of(context).viewInsets.bottom),
         child: ListView(
-          padding: EdgeInsets.all(16),
+          padding: GUIEstandar.paddingFormulario,
           children: [
-            Text('${registrar ? "Registrar un nuevo" : "Actualizar"} Horario',
-                textAlign: TextAlign.center),
-            SizedBox(
-              height: 16,
+            Text(
+              '${registrar ? "Registrar un nuevo" : "Actualizar"} Horario',
+              textAlign: TextAlign.center,
+              style: GUIEstandar.estiloTextoBoton,
             ),
-            Text('Seleccionar profesor:'),
+            GUIEstandar.espacioEntreCampos,
+            const Text('Seleccionar profesor:'),
             DropdownButtonFormField(
               value: nprofesor,
               items: app.profesor
                   .map((e) => DropdownMenuItem(
-                        child: Text('${e.nprofesor} -> ${e.nombre}'),
                         value: e.nprofesor,
+                        child: Text('${e.nprofesor} - ${e.nombre}'),
                       ))
                   .toList(),
               onChanged: (value) => nprofesor = value.toString(),
             ),
-            SizedBox(
-              height: 16,
-            ),
-            Text('Seleccionar materia:'),
+            GUIEstandar.espacioEntreCampos,
+            const Text('Seleccionar materia:'),
             DropdownButtonFormField(
               value: nmat,
               items: app.materias
                   .map((e) => DropdownMenuItem(
-                        child: Text('${e.nmat} -> ${e.descripcion}'),
                         value: e.nmat,
+                        child: Text('${e.nmat} - ${e.descripcion}'),
                       ))
                   .toList(),
               onChanged: (value) => nmat = value.toString(),
             ),
             TextField(
               controller: hora,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   labelText: 'HORA:', suffixIcon: Icon(Icons.watch)),
             ),
-            SizedBox(
-              height: 16,
-            ),
+            GUIEstandar.espacioEntreCampos,
             TextField(
               controller: edificio,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   labelText: 'EDIFICIO:',
                   suffixIcon: Icon(Icons.location_city)),
             ),
-            SizedBox(
-              height: 16,
-            ),
+            GUIEstandar.espacioEntreCampos,
             TextField(
               controller: salon,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   labelText: 'SALON:', suffixIcon: Icon(Icons.event_seat)),
             ),
-            SizedBox(
-              height: 16,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  finalizar() {
-                    Navigator.pop(context);
-                    app.consultarHorario();
-                    for (var element in [hora, edificio, salon]) {
-                      element.clear();
-                    }
-                    nmat = '';
-                    nprofesor = '';
-                  }
+            GUIEstandar.espacioEntreCampos,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                    style: GUIEstandar.estiloCancelarFormulario,
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      'Cancelar',
+                      style: GUIEstandar.estiloTextoBoton,
+                    )),
+                ElevatedButton(
+                    style: GUIEstandar.estiloAceptarFormulario,
+                    onPressed: () {
+                      finalizar() {
+                        Navigator.pop(context);
+                        app.consultarHorario();
+                        for (var element in [hora, edificio, salon]) {
+                          element.clear();
+                        }
+                        nmat = '';
+                        nprofesor = '';
+                      }
 
-                  var m = Horario(
-                      nhorario: h?.nhorario,
-                      nprofesor: nprofesor,
-                      nmat: nmat,
-                      hora: hora.text,
-                      edificio: edificio.text,
-                      salon: salon.text);
-                  registrar
-                      ? DBHorario.registrar(m).then((value) {
-                          finalizar();
-                          app.consultarHorario();
-                          app.mensaje('Horario registrado con exito');
-                        })
-                      : DBHorario.actualizar(m).then((value) {
-                          finalizar();
-                          app.consultarHorario();
-                          app.mensaje('Materia actualizada con exito');
-                        });
-                },
-                child: Text(registrar ? 'Registrar' : 'Actualizar'))
+                      var m = Horario(
+                          nhorario: h?.nhorario,
+                          nprofesor: nprofesor,
+                          nmat: nmat,
+                          hora: hora.text,
+                          edificio: edificio.text,
+                          salon: salon.text);
+                      registrar
+                          ? DBHorario.registrar(m).then((value) {
+                              finalizar();
+                              app.consultarHorario();
+                              app.mensaje('Horario registrado con exito');
+                            })
+                          : DBHorario.actualizar(m).then((value) {
+                              finalizar();
+                              app.consultarHorario();
+                              app.mensaje('Materia actualizada con exito');
+                            });
+                    },
+                    child: Text(
+                      registrar ? 'Registrar' : 'Actualizar',
+                      style: GUIEstandar.estiloTextoBoton,
+                    )),
+              ],
+            )
           ],
         ),
       ),
@@ -133,21 +143,20 @@ class GUIHorario {
 
   static Widget listaHorario(MyAppState app) {
     var horario = app.horario;
-    if (horario.length > 0) {
+    if (horario.isNotEmpty) {
       return ListView.builder(
         itemCount: horario.length,
         itemBuilder: (context, index) => ListTile(
-          onTap: () => detalleHorario(app, horario[index]),
           leading: CircleAvatar(child: Text('${horario[index].nhorario}')),
-          title:
-              Text("${horario[index].nombre} -> ${horario[index].descripcion}"),
-          subtitle:
-              Text('${horario[index].hora} -> ${horario[index].edificio}'),
+          title: Text("${horario[index].nombre}"),
+          subtitle: Text(
+              '''Materia:${horario[index].descripcion} Hora:${horario[index].hora}
+Edificio:${horario[index].edificio} Salon:${horario[index].salon}'''),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                  icon: Icon(Icons.mode),
+                  icon: const Icon(Icons.mode),
                   onPressed: () {
                     formularioRegistrar(app, false, horario[index]);
                   }),
@@ -155,25 +164,26 @@ class GUIHorario {
                   onPressed: () {
                     borrar(app, horario[index]);
                   },
-                  icon: Icon(Icons.delete))
+                  icon: const Icon(Icons.delete))
             ],
           ),
         ),
       );
-    } else
-      return Center(
-        child: Text('No hay horarios registrados',
-            style: TextStyle(color: Colors.black54)),
-      );
+    } else {
+      return GUIEstandar.listaVacia('No hay horarios registrados');
+    }
   }
 
   static void borrar(MyAppState app, HorarioConsultado horario) {
     showDialog(
       context: app.context,
       builder: (context) => AlertDialog(
-        title: Text("Eliminar"),
-        content: Text("Deseas eliminar el horario?"),
+        title: const Text("Eliminar"),
+        content: const Text("Deseas eliminar el horario?"),
         actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar')),
           TextButton(
               onPressed: () {
                 DBHorario.eliminar(horario.nhorario).then((value) {
@@ -182,28 +192,8 @@ class GUIHorario {
                   app.mensaje("Materia eliminada con exito");
                 });
               },
-              child: Text('Si'))
+              child: const Text('Si'))
         ],
-      ),
-    );
-  }
-
-  static detalleHorario(MyAppState app, HorarioConsultado horario) {
-    showDialog(
-      context: app.context,
-      builder: (context) => AlertDialog(
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context), child: Text('Cerrar'))
-        ],
-        title: Text('Horario ${horario.nhorario}'),
-        content: Text('''
-      Profesor: ${horario.nombre}
-      Materia: ${horario.descripcion}
-      Edificio: ${horario.edificio}
-      Salon: ${horario.salon}
-      Hora: ${horario.hora}     
-      '''),
       ),
     );
   }
