@@ -1,5 +1,8 @@
 import 'package:dam_u3_practica1_checador_asistencia/Controlador/DBHorario.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Controlador/DBMateria.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIConsultarAsistencia.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIConsultarHorario.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIConsultarMateria.dart';
 import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIHorario.dart';
 import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIMateria.dart';
 import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIProfesor.dart';
@@ -7,7 +10,6 @@ import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIAsistencia.dart';
 
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/HorarioConsultado.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/Materia.dart';
-import 'package:dam_u3_practica1_checador_asistencia/Modelo/asistencia.dart';
 import 'package:flutter/material.dart';
 
 import 'Controlador/DBAsistencia.dart';
@@ -31,6 +33,7 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   int _indice = 0;
+  int _indicedrawer = 0;
   List<Materia> materias = [];
   List<Profesor> profesor = [];
   List<HorarioConsultado> horario = [];
@@ -49,6 +52,7 @@ class MyAppState extends State<MyApp> {
     Icons.access_time_filled,
     Icons.format_list_numbered
   ];
+
   // BottomNavigator
 
   @override
@@ -124,13 +128,16 @@ class MyAppState extends State<MyApp> {
                 GUIProfesor.formularioRegistrar(this, true);
               case 2:
                 GUIHorario.formularioRegistrar(this, true);
-              case 3 :
+              case 3:
                 GUIAsistencia.formularioRegistrar(this, true);
             }
           },
           child: Row(
             children: [
-              Icon(iconos[_indice],color: colores[_indice].shade100,),
+              Icon(
+                iconos[_indice],
+                color: colores[_indice].shade100,
+              ),
               Icon(
                 Icons.add,
                 color: colores[_indice].shade100,
@@ -138,18 +145,129 @@ class MyAppState extends State<MyApp> {
             ],
             mainAxisAlignment: MainAxisAlignment.center,
           )),
+      drawer: Drawer(
+        child: Container(
+          decoration: BoxDecoration(color: Colors.green),
+          child: ListView(
+            children: [
+              DrawerHeader(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: AssetImage('assets/logo.png'),
+                      // Ejemplo de imagen personalizada
+                      radius: 40,
+                    ),
+                    Text("CHECADOR",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Montserrat',
+                          color: Colors.white,
+                          letterSpacing: 2.0,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black,
+                              blurRadius: 2,
+                              offset: Offset(2, 2),
+                            ),
+                          ],
+                        )),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.white, Colors.green],
+                  ),
+                ),
+              ),
+              //SizedBox(height: 20),
+              itemDrawer(1, Icons.menu_book_sharp, "Consulta Materias"),
+              Divider(color: Colors.white),
+              itemDrawer(2, Icons.list_alt_rounded, "Consulta Asistencias"),
+              Divider(color: Colors.white), // Separador personalizado
+              itemDrawer(3, Icons.access_time_filled, "Consulta Horarios"),
+              Divider(color: Colors.white), // Separador personalizado
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget itemDrawer(int indice, IconData icono, String etiqueta) {
+    return ListTile(
+      onTap: () {
+        setState(() {
+          _indicedrawer = indice;
+        });
+        if (_indicedrawer == 1) {
+          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return GUIConsultarMateria();
+          }));
+        } else {
+          if (_indicedrawer == 2) {
+            Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return GUIConsultarAsistencia();
+            }));
+          } else {
+            Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return GUIConsultarHorario();
+            }));
+          }
+        }
+      },
+      title: Row(
+        children: [
+          Expanded(
+            child: Icon(
+              icono,
+              color: Colors.white, // Color del ícono
+              size: 28, // Tamaño del ícono
+            ),
+          ),
+          SizedBox(width: 10), // Espacio entre el ícono y el texto
+          Expanded(
+            flex: 2,
+            child: Text(
+              etiqueta,
+              style: TextStyle(
+                color: Colors.white, // Color del texto
+                fontSize: 24, // Tamaño del texto
+                fontWeight: FontWeight.bold, // Negrita del texto
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   dinamico() {
     switch (_indice) {
-      case 0:return GUIMateria.listaMaterias(this);
-      case 1: return GUIProfesor.listaProfesor(this);
-      case 2: return GUIHorario.listaHorario(this);
-      case 3: return GUIAsistencia.listaAsistencia(this);
+      case 0:
+        return GUIMateria.listaMaterias(this);
+      case 1:
+        return GUIProfesor.listaProfesor(this);
+      case 2:
+        return GUIHorario.listaHorario(this);
+      case 3:
+        return GUIAsistencia.listaAsistencia(this);
+      case 4:
+        return consultamateria();
       default:
         return GUIMateria.listaMaterias(this);
     }
+  }
+
+  Widget consultamateria() {
+    return ListView();
   }
 
   void consultarMaterias() async {
