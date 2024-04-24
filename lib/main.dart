@@ -3,11 +3,16 @@ import 'package:dam_u3_practica1_checador_asistencia/Controlador/DBMateria.dart'
 import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIHorario.dart';
 import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIMateria.dart';
 import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIProfesor.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIAsistencia.dart';
+
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/HorarioConsultado.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/Materia.dart';
+import 'package:dam_u3_practica1_checador_asistencia/Modelo/asistencia.dart';
 import 'package:flutter/material.dart';
 
+import 'Controlador/DBAsistencia.dart';
 import 'Controlador/DBprofesor.dart';
+import 'Modelo/horario_asistencia.dart';
 import 'Modelo/profesor.dart';
 
 void main() {
@@ -29,6 +34,7 @@ class MyAppState extends State<MyApp> {
   List<Materia> materias = [];
   List<Profesor> profesor = [];
   List<HorarioConsultado> horario = [];
+  List<Horario_Asistencia> asistencialist = [];
 
   // BottomNavigator
   static const List<MaterialColor> colores = [
@@ -52,6 +58,7 @@ class MyAppState extends State<MyApp> {
     consultarMaterias();
     consultarProfesor();
     consultarHorario();
+    consultarAsistencia();
   }
 
   @override
@@ -117,6 +124,8 @@ class MyAppState extends State<MyApp> {
                 GUIProfesor.formularioRegistrar(this, true);
               case 2:
                 GUIHorario.formularioRegistrar(this, true);
+              case 3 :
+                GUIAsistencia.formularioRegistrar(this, true);
             }
           },
           child: Row(
@@ -134,12 +143,10 @@ class MyAppState extends State<MyApp> {
 
   dinamico() {
     switch (_indice) {
-      case 0:
-        return GUIMateria.listaMaterias(this);
-      case 1:
-        return GUIProfesor.listaProfesor(this);
-      case 2:
-        return GUIHorario.listaHorario(this);
+      case 0:return GUIMateria.listaMaterias(this);
+      case 1: return GUIProfesor.listaProfesor(this);
+      case 2: return GUIHorario.listaHorario(this);
+      case 3: return GUIAsistencia.listaAsistencia(this);
       default:
         return GUIMateria.listaMaterias(this);
     }
@@ -167,6 +174,13 @@ class MyAppState extends State<MyApp> {
     var x = await DBHorario.consultar();
     setState(() {
       horario = x;
+    });
+  }
+
+  void consultarAsistencia() async {
+    var x = await DBAsistencia.consultar();
+    setState(() {
+      asistencialist = x;
     });
   }
 }
