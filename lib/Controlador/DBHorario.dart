@@ -10,17 +10,19 @@ class DBHorario {
     return db.insert('HORARIO', horario);
   }
 
-  static Future<List<HorarioConsultado>> consultar() async {
+  static Future<List<HorarioConsultado>> consultar([String? nprofesor]) async {
     var db = await ConexionDB.abrirDB();
     var resultado = await db.rawQuery("""
       SELECT *
       FROM HORARIO, PROFESOR, MATERIA
       WHERE HORARIO.NPROFESOR = PROFESOR.NPROFESOR
-      AND HORARIO.NMAT = MATERIA.NMAT;
+      AND HORARIO.NMAT = MATERIA.NMAT
+      ${nprofesor!=null?' AND PROFESOR.NPROFESOR = $nprofesor':''} 
+      ${nprofesor!= null? 'GROUP BY MATERIA.NMAT': ""};
     """);
     return List.generate(
         resultado.length,
-        (index) => HorarioConsultado(
+            (index) => HorarioConsultado(
             nhorario: int.parse(resultado[index]["NHORARIO"].toString()),
             nprofesor: resultado[index]["NPROFESOR"].toString(),
             nmat: resultado[index]["NMAT"].toString(),

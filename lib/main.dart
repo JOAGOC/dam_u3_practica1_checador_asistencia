@@ -259,15 +259,9 @@ class MyAppState extends State<MyApp> {
         return GUIHorario.listaHorario(this);
       case 3:
         return GUIAsistencia.listaAsistencia(this);
-      case 4:
-        return consultamateria();
       default:
         return GUIMateria.listaMaterias(this);
     }
-  }
-
-  Widget consultamateria() {
-    return ListView();
   }
 
   void consultarMaterias() async {
