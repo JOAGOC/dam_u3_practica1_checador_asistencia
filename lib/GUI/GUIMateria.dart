@@ -1,4 +1,5 @@
 import 'package:dam_u3_practica1_checador_asistencia/Controlador/DBMateria.dart';
+import 'package:dam_u3_practica1_checador_asistencia/GUI/GUIEstandar.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/Materia.dart';
 import 'package:dam_u3_practica1_checador_asistencia/main.dart';
 import 'package:flutter/material.dart';
@@ -22,27 +23,24 @@ class GUIMateria {
             right: 8,
             bottom: MediaQuery.of(context).viewInsets.bottom),
         child: ListView(
-          padding: EdgeInsets.all(16),
+          padding: GUIEstandar.paddingFormulario,
           children: [
             Text('${registrar ? "Registrar una nueva" : "Actualizar"} Materia',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                )),
-            espacioEntreCampos(),
+                style: GUIEstandar.estiloTextoBoton),
+            GUIEstandar.espacioEntreCampos,
             TextField(
               controller: nmat,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   labelText: 'NMAT (Clave)', suffixIcon: Icon(Icons.mode)),
             ),
-            espacioEntreCampos(),
+            GUIEstandar.espacioEntreCampos,
             TextField(
               controller: descripcion,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   labelText: 'Descripcion', suffixIcon: Icon(Icons.book)),
             ),
-            espacioEntreCampos(),
+            GUIEstandar.espacioEntreCampos,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -50,14 +48,14 @@ class GUIMateria {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  style: estiloCancelarFormulario(),
-                  child: Text(
+                  style: GUIEstandar.estiloCancelarFormulario,
+                  child: const Text(
                     "Cancelar",
-                    style: estiloBotonFormulario(),
+                    style: GUIEstandar.estiloTextoBoton,
                   ),
                 ),
                 ElevatedButton(
-                    style: estiloBotonAceptarFormulario(),
+                    style: GUIEstandar.estiloAceptarFormulario,
                     onPressed: () {
                       finalizar() {
                         Navigator.pop(context);
@@ -82,7 +80,7 @@ class GUIMateria {
                     },
                     child: Text(
                       registrar ? 'Registrar' : 'Actualizar',
-                      style: estiloBotonFormulario(),
+                      style: GUIEstandar.estiloTextoBoton,
                     )),
               ],
             )
@@ -91,33 +89,10 @@ class GUIMateria {
       ),
     );
   }
-
-  static SizedBox espacioEntreCampos() {
-    return SizedBox(
-      height: 20,
-    );
-  }
-
-  static ButtonStyle estiloBotonAceptarFormulario() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: Colors.green,
-      foregroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
-      ),
-    );
-  }
-
-  static TextStyle estiloBotonFormulario() {
-    return TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.bold,
-    );
-  }
-
+  
   static Widget listaMaterias(MyAppState app) {
     var materias = app.materias;
-    if (materias.length > 0)
+    if (materias.isNotEmpty) {
       return ListView.builder(
         itemCount: materias.length,
         itemBuilder: (context, index) => ListTile(
@@ -127,7 +102,7 @@ class GUIMateria {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                  icon: Icon(Icons.mode),
+                  icon: const Icon(Icons.mode),
                   onPressed: () {
                     formularioRegistrar(app, false, materias[index]);
                   }),
@@ -135,25 +110,24 @@ class GUIMateria {
                   onPressed: () {
                     borrar(app, materias[index]);
                   },
-                  icon: Icon(Icons.delete))
+                  icon: const Icon(Icons.delete))
             ],
           ),
         ),
       );
-    else
-      return Center(
-        child: Text('No hay materias registradas',
-            style: TextStyle(color: Colors.black54)),
-      );
+    } else{
+      return GUIEstandar.listaVacia('No hay materias registradas');
+    }
   }
 
   static void borrar(MyAppState app, Materia materia) {
     showDialog(
       context: app.context,
       builder: (context) => AlertDialog(
-        title: Text("Eliminar"),
-        content: Text("Deseas eliminar la materia?"),
+        title: const Text("Eliminar"),
+        content: const Text("Deseas eliminar la materia?"),
         actions: [
+          TextButton(onPressed: ()=>Navigator.pop(context), child: const Text('Cancelar')),
           TextButton(
               onPressed: () {
                 DBMateria.eliminar(materia.nmat).then((value) {
@@ -162,18 +136,8 @@ class GUIMateria {
                   app.mensaje("Materia eliminada con exito");
                 });
               },
-              child: Text('Si'))
+              child: const Text('Si'))
         ],
-      ),
-    );
-  }
-
-  static estiloCancelarFormulario() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: Colors.red,
-      foregroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
       ),
     );
   }
