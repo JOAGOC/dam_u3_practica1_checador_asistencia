@@ -33,7 +33,7 @@ class _GUIConsultarMateriaState extends State<GUIConsultarMateria> {
   }
 
   void consultarHorario() async {
-    var x = await DBHorario.consultar(profesor);
+    var x = await DBHorario.consultar(profesor,1);
     setState(() {
       recuMateria = x;
     });
@@ -78,7 +78,7 @@ class _GUIConsultarMateriaState extends State<GUIConsultarMateria> {
                 icon: Icon(Icons.access_time),
                 items: listaProfesor.map((e) {
                   return DropdownMenuItem(
-                    child: Text('${e.nombre} - ${e.carrera}',
+                    child: Text('${e.nombre}\n${e.carrera}',
                         style: TextStyle(
                           fontSize: 20,
                         )),

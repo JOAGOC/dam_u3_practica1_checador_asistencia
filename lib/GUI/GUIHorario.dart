@@ -106,8 +106,8 @@ class GUIHorario {
                         for (var element in [hora, edificio, salon]) {
                           element.clear();
                         }
-                        nmat = '';
-                        nprofesor = '';
+                        nmat = app.materias.first.nmat;
+                        nprofesor = app.profesor.first.nprofesor;
                       }
 
                       var m = Horario(

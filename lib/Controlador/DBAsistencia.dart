@@ -1,4 +1,3 @@
-import 'package:dam_u3_practica1_checador_asistencia/Modelo/Horario.dart';
 import 'package:dam_u3_practica1_checador_asistencia/Modelo/asistencia.dart';
 import 'package:dam_u3_practica1_checador_asistencia/conexion.dart';
 
@@ -12,14 +11,15 @@ class DBAsistencia {
     return db.insert('ASISTENCIA', asistencia);
   }
 
-  static Future<List<Horario_Asistencia>> consultar() async {
+  static Future<List<Horario_Asistencia>> consultar([String? nprofesor]) async {
     var db = await ConexionDB.abrirDB();
     var resultado = await db.rawQuery("""
       SELECT *
       FROM HORARIO, PROFESOR, MATERIA, ASISTENCIA
       WHERE HORARIO.NPROFESOR = PROFESOR.NPROFESOR
       AND HORARIO.NMAT = MATERIA.NMAT 
-      AND HORARIO.NHORARIO = ASISTENCIA.NHORARIO;
+      AND HORARIO.NHORARIO = ASISTENCIA.NHORARIO
+      ${nprofesor!=null?' AND PROFESOR.NPROFESOR = $nprofesor':''};
     """);
     return List.generate(
         resultado.length,
@@ -38,7 +38,6 @@ class DBAsistencia {
                 idasistencia: int.parse(resultado[index]["IDASISTENCIA"].toString()),
             )
     );
-
   }
 
   static Future<int> actualizar(Asistencia a) async {

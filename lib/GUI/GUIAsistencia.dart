@@ -45,7 +45,7 @@ class GUIAsistencia {
                 items: app.horario.map((e) {
                   return DropdownMenuItem(
                     value: e.nhorario,
-                    child: Text('${e.hora} - ${e.nombre}'),
+                    child: Text('${e.hora} - ${e.nombre}\n${e.descripcion}'),
                   );
                 }).toList(),
                 onChanged: (value) => nhorario = value!),
